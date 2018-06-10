@@ -110,3 +110,7 @@ app.patch('/todos/:id', (req, res) => {
     })
 
 }); 
+
+module.exports = {
+    app
+}

@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 
 
 app.listen(port, () => {
-    console.log(`Started up at`,port);
+    console.log(`Started up at`, port);
 })
 
 app.use(bodyParser.json());
@@ -51,6 +51,25 @@ app.get('/todos/:id', (req, res) => {
     }
 
     Todo.findById(id).then((doc) => {
+        if (!doc) {
+            res.status(404).send();
+        }
+        console.log(doc);
+        res.send({doc});
+    }).catch((err) => {
+        res.status(404).send();
+    })
+})
+
+
+app.delete('/todos/:id', (req, res) => {
+    var id = req.params.id;
+    if (!ObjectId.isValid(id)) {
+        res.status(404).send();
+
+    }
+
+    Todo.findByIdAndRemove(id).then((doc) => {
         if (!doc) {
             res.status(404).send();
         }

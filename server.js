@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 
 
 app.listen(port, () => {
-    console.log(`Started up at ${port}`);
+    console.log(`Started up at`,port);
 })
 
 app.use(bodyParser.json());

@@ -3,9 +3,11 @@ var bodyParser = require('body-parser');
 var { ObjectId } = require('mongodb');
 
 var app = express();
+const port = process.env.PORT || 3000;
 
-app.listen(3000, () => {
-    console.log('Connected to DB', 3000);
+
+app.listen(port, () => {
+    console.log(`Started up at ${port}`);
 })
 
 app.use(bodyParser.json());

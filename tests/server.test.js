@@ -4,9 +4,10 @@ var request = require('supertest');
 var { Todo } = require('../modals/todo');
 var { app } = require('../server');
 
-beforeEach((done) => {
-    Todo.remove({}).then(() => done());
-})
+beforeEach((done)=>{
+    Todo.remove({}).then(()=> done());
+});
+
 describe('POST /todos', () => {
     it('should create a new todo', (done) => {
 

@@ -17,7 +17,8 @@ app.use(bodyParser.json());
 
 var mongoose = require('./db/mongoose');
 var Todo = require('./modals/todo');
-var {User} = require('./modals/users');
+var { User } = require('./modals/users');
+var { authenticate } = require('./middleware/authenticate');
 
 app.post('/todos', (req, res) => {
     var todo = new Todo({
@@ -112,14 +113,22 @@ app.patch('/todos/:id', (req, res) => {
 });
 
 
-app.post('/user', (req, res) => {
-    var body = _.pick(req.body, ['email', 'password']);
-    console.log(body);
-    var user = new User(body);
 
-    user.save().then(() => {
+app.get('/users/me', authenticate, (req, res) => {
+    res.send(req.user)
+
+});
+
+app.post('/users', (req, res) => {
+    var body = _.pick(req.body, ['email', 'password']);
+    //console.log(body);
+    var user = new User(body);
+    user.save().then((doc) => {
+        console.log('value of the new user' + ' ' + doc)
+        //console.log('value of the user.generateAuthToken()' +' ' + user.generateAuthToken())
         return user.generateAuthToken();
     }).then((token) => {
+        console.log('value of the token' + ' ' + token)
         res.header('x-auth', token).send(user);
     }).catch((err) => {
         res.status('400').send(err);

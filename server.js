@@ -119,6 +119,8 @@ app.get('/users/me', authenticate, (req, res) => {
 
 });
 
+
+
 app.post('/users', (req, res) => {
     var body = _.pick(req.body, ['email', 'password']);
     //console.log(body);

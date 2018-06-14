@@ -53,12 +53,12 @@ UserSchema.statics.findByToken = function (token) {
     })
 }
 
-UserSchema.pre('save',function(next) {
+UserSchema.pre('save', function (next) {
     var user = this;
 
-    if(user.isModified('password')){
-        brcypt.genSalt(10,(err,salt)=>{
-            brcypt.hash(user.password,salt,(err,hash)=>{
+    if (user.isModified('password')) {
+        brcypt.genSalt(10, (err, salt) => {
+            brcypt.hash(user.password, salt, (err, hash) => {
                 user.password = hash;
                 next();
             });
@@ -73,18 +73,37 @@ UserSchema.methods.toJSON = function () {
     return _.pick(userObject, ['_id', 'email']);
 }
 
+UserSchema.statics.findByCredentials = function (email, password) {
+    var user = this;
+
+    return User.findOne({ email }).then((user) => {
+        if (!user) {
+            return Promise.reject();
+        }
+
+        return new Promise((resolve, reject) => {
+            brcypt.compare(password, user.password, (err, res) => {
+                if (res) {
+                    resolve(user);
+                } else {
+                    reject();
+                }
+            });
+        });
+    });
+}
 
 UserSchema.methods.generateAuthToken = function () {
     var user = this;
-    console.log('user is' + ' ' + user);
+    //console.log('user is' + ' ' + user);
     var access = 'auth'
     var token = jwt.sign({ _id: user._id.toHexString(), access }, 'abc123').toString();
 
     user.tokens.push({ access, token });
 
     return user.save().then((doc1) => {
-        console.log('doc1 value is' + ' '+ doc1);
-        console.log('token value is' + ' '+ token);
+        //console.log('doc1 value is' + ' '+ doc1);
+        //console.log('token value is' + ' '+ token);
         return token;
     });
 }
